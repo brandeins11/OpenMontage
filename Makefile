@@ -6,7 +6,7 @@ PIP = $(RUN_PYTHON) -m pip
 
 .DEFAULT_GOAL := setup
 
-.PHONY: setup install install-dev install-gpu test test-contracts lint clean preflight demo demo-list hyperframes-doctor hyperframes-warm venv ensure-venv
+.PHONY: setup install install-dev install-gpu test test-contracts lint clean preflight demo demo-list hyperframes-doctor hyperframes-warm venv ensure-venv aussenprobe
 
 # ---- Virtual environment ----
 
@@ -91,6 +91,10 @@ install-gpu: ensure-venv
 
 test: ensure-venv
 	$(RUN_PYTHON) -m pytest tests/ -v
+
+# Wirkt ein Test nach draussen, wenn echte Schluessel da sind? (scripts/aussenprobe.py)
+aussenprobe: ensure-venv
+	$(RUN_PYTHON) scripts/aussenprobe.py
 
 test-contracts: ensure-venv
 	$(RUN_PYTHON) -m pytest tests/contracts/ -v

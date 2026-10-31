@@ -1,0 +1,48 @@
+{
+  "$zweck": "Begruendete Ausnahmen der Aussenprobe (scripts/aussenprobe.py, CI). Ein Eintrag gilt fuer einen Test (Praefix der pytest-ID) und eine Art (netz, dns, loopback, programm, git-push-remote, schreibt-ins-home). Grund mind. 20 Zeichen. Ein Eintrag, den kein Treffer mehr braucht, ist ein Fehler.",
+  "$stand": "2026-10-31, Einfuehrung (Entscheid Maximilian)",
+  "ausnahmen": [
+    {
+      "test": "tests/contracts/test_comfyui_tools",
+      "art": "loopback",
+      "ziel": "8188",
+      "grund": "Nur Verfuegbarkeitsabfrage GET /system_stats auf den ComfyUI-Standardport; auf dem Mini laeuft kein ComfyUI. Laeuft dort einmal einer, diese Ausnahme neu pruefen."
+    },
+    {
+      "test": "tests/contracts/test_comfyui_tools",
+      "art": "loopback",
+      "ziel": "19999",
+      "grund": "Absichtlich unbelegter Port: der Test prueft, dass ein nicht erreichbarer ComfyUI-Server als «nicht verfuegbar» gemeldet wird."
+    },
+    {
+      "test": "tests/contracts/test_phase0_contracts",
+      "art": "loopback",
+      "ziel": "8188",
+      "grund": "Nur Verfuegbarkeitsabfrage GET /system_stats auf den ComfyUI-Standardport; auf dem Mini laeuft kein ComfyUI. Laeuft dort einmal einer, diese Ausnahme neu pruefen."
+    },
+    {
+      "test": "tests/contracts/test_phase2_contracts",
+      "art": "loopback",
+      "ziel": "8188",
+      "grund": "Nur Verfuegbarkeitsabfrage GET /system_stats auf den ComfyUI-Standardport; auf dem Mini laeuft kein ComfyUI. Laeuft dort einmal einer, diese Ausnahme neu pruefen."
+    },
+    {
+      "test": "tests/contracts/test_phase3_contracts",
+      "art": "loopback",
+      "ziel": "8188",
+      "grund": "Nur Verfuegbarkeitsabfrage GET /system_stats auf den ComfyUI-Standardport; auf dem Mini laeuft kein ComfyUI. Laeuft dort einmal einer, diese Ausnahme neu pruefen."
+    },
+    {
+      "test": "tests/tools/test_documentary_governance",
+      "art": "loopback",
+      "ziel": "8188",
+      "grund": "Nur Verfuegbarkeitsabfrage GET /system_stats auf den ComfyUI-Standardport; auf dem Mini laeuft kein ComfyUI. Laeuft dort einmal einer, diese Ausnahme neu pruefen."
+    },
+    {
+      "test": "tests/tools/test_hyperframes_compose",
+      "art": "loopback",
+      "ziel": "8188",
+      "grund": "Nur Verfuegbarkeitsabfrage GET /system_stats auf den ComfyUI-Standardport; auf dem Mini laeuft kein ComfyUI. Laeuft dort einmal einer, diese Ausnahme neu pruefen."
+    }
+  ]
+}
