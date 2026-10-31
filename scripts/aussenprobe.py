@@ -54,6 +54,19 @@ def befunde(zeilen, ausnahmen):
     return aus, [a for i, a in enumerate(ausnahmen) if i not in gebraucht]
 
 
+
+def _erste_ursache(zeilen):
+    """Letzte Zeile des ersten Tracebacks (unittest) bzw. erste E-Zeile (pytest)."""
+    drin = False
+    for z in zeilen:
+        if z.startswith("E   "):
+            return z[4:].strip()
+        if z.startswith("Traceback (most recent call last)"):
+            drin = True
+        elif drin and z and not z.startswith(" "):
+            return z
+    return ""
+
 def main():
     ausnahmen = json.loads(AUSNAHMEN.read_text())["ausnahmen"]
     kaputt = [a for a in ausnahmen if len(a.get("grund", "")) < 20]
@@ -68,6 +81,9 @@ def main():
         r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "tests"],
                            cwd=WURZEL, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         stand = (r.stdout.strip().splitlines() or ["?"])[-1]
+        rc, alle = r.returncode, r.stdout.splitlines()
+        gescheitert = [z for z in alle if z.startswith(("ERROR: ", "FAIL: ", "FAILED ", "ERROR ")) and not z.startswith("FAILED (")]
+        ursache = _erste_ursache(alle)
         zeilen = [json.loads(z) for z in log.read_text().splitlines()] if log.exists() else []
     aus, unbenutzt = befunde(zeilen, ausnahmen)
     print("Aussenprobe: Suite %s · %d Ereignisse, %d Befunde" % (stand, len(zeilen), len(aus)))
@@ -76,11 +92,20 @@ def main():
         je[(b["art"], b["test"])].add(b["ziel"])
     for (art, test), ziele in sorted(je.items()):
         print("  BEFUND %-17s %s — %s" % (art, test, sorted(ziele)[0]))
+    # Eine Probe ueber Tests, die nicht laufen, misst nichts (31.10.2026: finanzen meldete
+    # «0 Befunde» aus einer Suite mit 110 Fehlern). Rot, sobald die Suite unter der Probe
+    # nicht gruen ist — auch wenn sie ohne Probe gruen ist, denn dann stoert der Waechter.
+    if rc != 0:
+        print("  FEHLER Suite unter der Probe nicht gruen (rc=%d, %d gescheitert)" % (rc, len(gescheitert)))
+        for z in gescheitert[:3]:
+            print("    " + z)
+        if ursache:
+            print("    erste Ursache: " + ursache)
     for a in kaputt:
         print("  FEHLER Ausnahme ohne Grund (>= 20 Zeichen): %s" % a.get("test"))
     for a in unbenutzt:
         print("  FEHLER Ausnahme deckt nichts mehr — streichen: %s / %s" % (a["test"], a["art"]))
-    return 1 if (aus or kaputt or unbenutzt) else 0
+    return 1 if (aus or kaputt or unbenutzt or rc != 0) else 0
 
 
 if __name__ == "__main__":

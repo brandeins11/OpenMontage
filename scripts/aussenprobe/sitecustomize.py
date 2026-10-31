@@ -1,4 +1,4 @@
-# Kopie von heinetzwerk scripts/ops/aussenprobe/sitecustomize.py (Stand bbe1a9b).
+# Kopie von heinetzwerk scripts/ops/aussenprobe/sitecustomize.py (Stand 1634596).
 # Aenderungen zuerst dort, dann hierher uebernehmen — zwei Fassungen driften sonst.
 # lauf-ergebnis: nicht zutreffend — Wächter fuer Testprozesse, kein Lauf.
 """Aussenprobe: faengt in Testprozessen ab, was auf dem Mini nach draussen wirken wuerde.
@@ -17,6 +17,7 @@ mit Port), `programm` (echtes Programm aus der Liste unten), `git-push-remote` (
 nicht lokales Remote), `schreibt-ins-home`. Netz, DNS und Programme werden vor der Wirkung
 abgebrochen; Loopback, Push und Schreiben werden nur gemeldet.
 """
+import functools
 import builtins
 import io
 import json
@@ -197,7 +198,12 @@ def _osopen(pfad, flags, *a, **k):
     return _orig_osopen(pfad, flags, *a, **k)
 
 
-os.open = _osopen
+# Als functools.partial, nicht als Funktion (31.10.2026): Python 3.9 haengt os.open und
+# os.replace als Klassenattribute an pathlib._NormalAccessor. Eine Python-Funktion bindet dort
+# als Methode — pathlib reicht dann den Accessor als Pfad und den Pfad als Flags, und jedes
+# Path.write_text scheitert mit TypeError. Eingebaute Funktionen und partial binden nicht.
+# Ab 3.11 gibt es den Accessor nicht mehr; der Mini laeuft mit 3.9 (/usr/bin/python3).
+os.open = functools.partial(_osopen)
 _orig_replace = os.replace
 
 
@@ -206,7 +212,7 @@ def _replace(quelle, ziel, *a, **k):
     return _orig_replace(quelle, ziel, *a, **k)
 
 
-os.replace = _replace
+os.replace = functools.partial(_replace)
 
 # --- Zuordnung zum laufenden Test ------------------------------------------------------
 import unittest.case as _uc  # noqa: E402
