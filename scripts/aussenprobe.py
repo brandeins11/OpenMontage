@@ -7,7 +7,7 @@ gesetzte Umgebungsvariablen haben Vorrang. Die Probe setzt deshalb fuer jeden Na
 `.env.example` einen Platzhalter und laesst die Suite mit dem Waechter
 `scripts/aussenprobe/sitecustomize.py` laufen. Ein Test, der dann ein bezahltes API, ein
 fremdes Programm (npx, curl, …) oder einen festen Port des eigenen Rechners anspricht oder
-ins Home schreibt, ist ein Befund. Testfehler meldet `make test`, nicht diese Probe.
+ins Home schreibt, ist ein Befund. Ist die Suite unter der Probe nicht gruen, ist die Probe rot (base-Lehre 2026-10-31).
 
 Ausnahmen mit Grund: `scripts/aussenprobe_ausnahmen.json`. Gemeldet wird das Ziel, nie ein
 Inhalt. Exit 0: kein Befund. Exit 1: Befund oder eine Ausnahme, die nichts mehr deckt.
