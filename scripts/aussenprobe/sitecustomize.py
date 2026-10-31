@@ -1,4 +1,4 @@
-# Kopie von heinetzwerk scripts/ops/aussenprobe/sitecustomize.py (Stand 5e3875d).
+# Kopie von heinetzwerk scripts/ops/aussenprobe/sitecustomize.py (Stand 9a6989c, master).
 # Aenderungen zuerst dort, dann hierher uebernehmen — zwei Fassungen driften sonst.
 # lauf-ergebnis: nicht zutreffend — Wächter fuer Testprozesse, kein Lauf.
 """Aussenprobe: faengt in Testprozessen ab, was auf dem Mini nach draussen wirken wuerde.
