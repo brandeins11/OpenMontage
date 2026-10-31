@@ -44,3 +44,9 @@ jobs:
 
       - name: Run test suite
         run: make test
+
+      # Aussenprobe (31.10.2026): dieselbe Suite mit Platzhaltern fuer alle Schluessel aus
+      # .env.example und einem Waechter fuer Netz, fremde Programme und Schreibzugriffe ins
+      # Home. Ein Test, der mit echten Schluesseln nach draussen wirken wuerde, wird hier rot.
+      - name: Aussenprobe
+        run: make aussenprobe

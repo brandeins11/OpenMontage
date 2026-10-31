@@ -1,5 +1,6 @@
 """Contract tests for the local character-animation pipeline."""
 
+import os
 import sys
 from pathlib import Path
 
@@ -236,6 +237,11 @@ def test_character_style_is_normalized_for_schema(tmp_path):
 
 
 def test_character_renderer_can_handoff_to_video_compose(tmp_path):
+    # Integrationstest: die Laufzeitpruefung und der Lauf holen `hyperframes` per
+    # `npx --yes` von npm und fuehren es aus — fremder Code aus dem Netz in jedem
+    # Testlauf (Aussenprobe 31.10.2026). Nur auf ausdruecklichen Wunsch.
+    if os.environ.get("HYPERFRAMES_INTEGRATION") != "1":
+        pytest.skip("Integrationstest: mit HYPERFRAMES_INTEGRATION=1 ausfuehren")
     hyperframes = HyperFramesCompose()
     runtime = hyperframes._runtime_check()
     if not runtime["runtime_available"]:

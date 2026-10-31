@@ -1,5 +1,6 @@
 """Phase 2 contract tests — Enhancement Layer tools."""
 
+import os
 import json
 import shutil
 import sys
@@ -167,7 +168,13 @@ class TestPhase2ErrorHandling:
         r = tool.execute({"input_path": "/nonexistent.mp4"})
         assert not r.success
 
-    def test_image_selector_no_provider(self):
+    def test_image_selector_no_provider(self, monkeypatch):
+        # "No provider" for real: with the keys from .env set, this test generated an
+        # image through a paid API (xAI) on every run (Aussenprobe 31.10.2026).
+        for name in list(os.environ):
+            if name.endswith(("_API_KEY", "_API_TOKEN", "_API_SECRET", "_KEY", "_TOKEN",
+                              "_ACCESS_KEY", "_CREDENTIALS")):
+                monkeypatch.delenv(name, raising=False)
         tool = ImageSelector()
         # Will fail if no API key or local model
         r = tool.execute({"prompt": "test"})
