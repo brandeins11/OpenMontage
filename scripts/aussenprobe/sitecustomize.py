@@ -1,4 +1,4 @@
-# Kopie von heinetzwerk scripts/ops/aussenprobe/sitecustomize.py (Stand 1634596).
+# Kopie von heinetzwerk scripts/ops/aussenprobe/sitecustomize.py (Stand 5e3875d).
 # Aenderungen zuerst dort, dann hierher uebernehmen — zwei Fassungen driften sonst.
 # lauf-ergebnis: nicht zutreffend — Wächter fuer Testprozesse, kein Lauf.
 """Aussenprobe: faengt in Testprozessen ab, was auf dem Mini nach draussen wirken wuerde.
@@ -59,11 +59,21 @@ def _melden(art, ziel):
 
 
 def _ist_ip(host):
+    h = str(host)
     try:
-        socket.inet_pton(socket.AF_INET6 if ":" in str(host) else socket.AF_INET, str(host))
+        socket.inet_pton(socket.AF_INET6 if ":" in h else socket.AF_INET, h)
         return True
     except (OSError, ValueError):
-        return False
+        pass
+    # Alte Ziffernformen (2130706433, 0x7f.1, 127.1) loest die libc ohne DNS auf (inet_aton);
+    # nur aus Ziffern, Punkten und hex — ein Name wie «example.com» faellt nie hierher.
+    if h and all(c in "0123456789abcdefxABCDEFX." for c in h) and h[0].isdigit():
+        try:
+            socket.inet_aton(h)
+            return True
+        except (OSError, ValueError):
+            pass
+    return False
 
 
 # --- Netz -------------------------------------------------------------------------------

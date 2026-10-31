@@ -57,8 +57,11 @@ def befunde(zeilen, ausnahmen):
 
 def _erste_ursache(zeilen):
     """Letzte Zeile des ersten Tracebacks (unittest) bzw. erste E-Zeile (pytest)."""
+    # Erst ab dem ersten Fehlerblock suchen: bestandene Tests geben eigene Tracebacks aus
+    # (z. B. absichtlich ausgeloeste Ausnahmen), die vor dem Bericht stehen.
+    start = next((i for i, z in enumerate(zeilen) if z.startswith(("ERROR: ", "FAIL: ", "___"))), 0)
     drin = False
-    for z in zeilen:
+    for z in zeilen[start:]:
         if z.startswith("E   "):
             return z[4:].strip()
         if z.startswith("Traceback (most recent call last)"):
